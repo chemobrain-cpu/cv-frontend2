@@ -62,12 +62,20 @@ module.exports.signup = async (req, res, next) => {
       let { email, password,username,fullName } = req.body;
 
       // Check if the email already exists
-      let userExist = await User.findOne({ email: email });
-      if (userExist) {
-         let error = new Error("User is already registered");
+      let userExist = await User.findOne({
+         $or: [
+           { email: email },
+           { fullName: fullName },
+           { username: username }
+         ]
+       });
+       
+       if (userExist) {
+         let error = new Error("User with the same email, full name, or username is already registered");
          error.statusCode = 301;
          return next(error);
-      }
+       }
+       
 
       // Generate the access token
       let accessToken = generateAccessToken(email);
