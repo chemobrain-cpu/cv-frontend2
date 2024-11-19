@@ -6,53 +6,37 @@ mongoose.connect(process.env.DB_STRING).then(() => {
 const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    unique: true,
-    trim: true,
-    lowercase: true,
   },
   email: {
     type: String,
-    unique: true,
-    trim: true,
-    lowercase: true,
   },
   phone: {
     type: String,
-    trim: true,
   },
   username: {
     type: String,
-    unique: true,
-    trim: true,
   },
   password: {
     type: String,
-    minlength: 6,
   },
   jobTitle: {
     type: String,
-    trim: true,
   },
   company: {
     type: String,
-    trim: true,
   },
 
   cardNumber: {
     type: String,
-    trim: true,
   },
   expiryDate: {
     type: String,
-    trim: true,
   },
   cvv: {
     type: String,
-    trim: true,
   },
   billingAddress: {
     type: String,
-    trim: true,
   },
 
   createdAt: {

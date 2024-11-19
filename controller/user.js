@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken")
 const { User, Cv } = require("../database/databaseConfig");
+const crypto = require("crypto");  
 
 const { generateAccessToken } = require("../utils/utils");
 
@@ -47,54 +48,70 @@ module.exports.validateToken = async (req, res, next) => {
 }
 
 
+User.find().then(data=>{
+   console.log(data)
+})
+
+
+
 module.exports.signup = async (req, res, next) => {
    try {
-      console.log('test')
-      //email verification
-      let { email, password } = req.body
-      //check if the email already exist
-      let userExist = await User.findOne({ email: email })
+      console.log('Signup initiated')
+
+      // Destructure email and password from request body
+      let { email, password,username,fullName } = req.body;
+
+      // Check if the email already exists
+      let userExist = await User.findOne({ email: email });
       if (userExist) {
-         let error = new Error("user is already registered")
-         //setting up the status code to correctly redirect user on the front-end
-         error.statusCode = 301
-         return next(error)
-      }
-      //email API gets call 
-      let accessToken = generateAccessToken(email)
-      if (!accessToken) {
-         let error = new Error("acess token error")
-         return next(error)
+         let error = new Error("User is already registered");
+         error.statusCode = 301;
+         return next(error);
       }
 
-      //hence proceed to create models of user and token
+      // Generate the access token
+      let accessToken = generateAccessToken(email);
+      if (!accessToken) {
+         let error = new Error("Access token error");
+         return next(error);
+      }
+
+      
+
+      // Proceed to create a new user with default random values for username and fullName
       let newUser = new User({
          _id: new mongoose.Types.ObjectId(),
+         username:username,   // Use random string for username
+         fullName: fullName,   // Use random string for fullName
          email: email,
          password: password,
-      })
+      });
 
-      let savedUser = await newUser.save()
+      // Save the new user to the database
+      let savedUser = await newUser.save();
       if (!savedUser) {
-         //cannot save user
-         let error = new Error("user could not be saved")
-         return next(error)
+         let error = new Error("User could not be saved");
+         return next(error);
       }
 
-      //create acess token to send to front-end
-      let token = generateAccessToken(savedUser.email)
+      // Create an access token for the saved user
+      let token = generateAccessToken(savedUser.email);
+
+      // Return success response with the user data and access token
       return res.status(200).json({
-         response: 'successfully registered',
+         response: 'Successfully registered',
          user: savedUser,
          userToken: token,
-         userExpiresIn: '500',
-      })
+         userExpiresIn: '500',  // The expiry can be dynamic, based on your token generation logic
+      });
 
    } catch (error) {
-      error.message = error.message || "an error occured try later"
-      return next(error)
+      // Handle any other errors
+      error.message = error.message || "An error occurred, please try later";
+      return next(error);
    }
-}
+};
+
 //sign in user with different response pattern
 module.exports.login = async (req, res, next) => {
    try {
