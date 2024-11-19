@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken")
 const { User, Cv } = require("../database/databaseConfig");
-const generateAccessToken = require('../utils/utils').generateAccessToken
 
-
+const { generateAccessToken } = require("../utils/utils");
 
 module.exports.validateToken = async (req, res, next) => {
    try {
@@ -50,6 +49,7 @@ module.exports.validateToken = async (req, res, next) => {
 
 module.exports.signup = async (req, res, next) => {
    try {
+      console.log('test')
       //email verification
       let { email, password } = req.body
       //check if the email already exist
@@ -61,7 +61,7 @@ module.exports.signup = async (req, res, next) => {
          return next(error)
       }
       //email API gets call 
-      let accessToken = generateAcessToken(email)
+      let accessToken = generateAccessToken(email)
       if (!accessToken) {
          let error = new Error("acess token error")
          return next(error)
@@ -82,7 +82,7 @@ module.exports.signup = async (req, res, next) => {
       }
 
       //create acess token to send to front-end
-      let token = generateAcessToken(savedUser.email)
+      let token = generateAccessToken(savedUser.email)
       return res.status(200).json({
          response: 'successfully registered',
          user: savedUser,
