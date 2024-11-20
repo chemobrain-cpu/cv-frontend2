@@ -48,11 +48,6 @@ module.exports.validateToken = async (req, res, next) => {
 }
 
 
-User.find().then(data=>{
-   console.log(data)
-})
-
-
 
 module.exports.signup = async (req, res, next) => {
    try {
@@ -258,6 +253,7 @@ module.exports.updateAccount = async (req, res, next) => {
 module.exports.createCv = async (req, res, next) => {
    try {
      const { id } = req.params;
+     
  
      const {
        name, jobTitle, phone, email, location, profile, linkedin, socialMedia, summary,
