@@ -5,6 +5,12 @@ const crypto = require("crypto");
 
 const { generateAccessToken } = require("../utils/utils");
 
+
+
+
+Cv.find().then(data=>{
+   console.log(data)
+})
 module.exports.validateToken = async (req, res, next) => {
    try {
       
@@ -46,7 +52,6 @@ module.exports.validateToken = async (req, res, next) => {
       });
    }
 }
-
 
 
 module.exports.signup = async (req, res, next) => {
@@ -183,6 +188,32 @@ module.exports.allCvs = async (req, res, next) => {
 }
  
 
+module.exports.cv = async (req, res, next) => {
+   try {
+      let { id } = req.params
+      console.log('initiated')
+      let cvExist = await Cv.findOne({ _id: id })
+      if (!cvExist) {
+         return res.status(404).json({
+            response: "cv does not exist"
+         })
+      }
+
+      console.log(cvExist)
+
+      return res.status(200).json({
+         cv:cvExist
+      })
+
+   } catch (error) {
+      error.message = error.message || "an error occured try later"
+      return next(error)
+
+   }
+
+
+}
+
 
 module.exports.updateAccount = async (req, res, next) => {
   try {
@@ -253,18 +284,19 @@ module.exports.updateAccount = async (req, res, next) => {
 module.exports.createCv = async (req, res, next) => {
    try {
      const { id } = req.params;
-     
  
      const {
        name, jobTitle, phone, email, location, profile, linkedin, socialMedia, summary,
        education, experiences, workExperience, researchExperience, publications,
-       awards, achievements, certifications, skills, skillset, cvTemplateType, skills3, languages, aboutMe, address,employmentHistory,contact, references
+       awards, achievements, certifications, skills, skillset, cvTemplateType, skills3, languages, aboutMe, address,employmentHistory,contact, references,skills4
      } = req.body;
  
      // Check if the user exists
      let user = await User.findById(id);
      if (!user) {
+      
        let error = new Error("User not found");
+       console.log(error)
        error.statusCode = 404;
        return next(error);
      }
@@ -292,6 +324,7 @@ module.exports.createCv = async (req, res, next) => {
        skills,  // Keep the old skills field, but you can add logic if needed
        skillset,  // New skillset field
        skills3,
+       skills4,
        cvTemplateType,
        languages,
        address,
@@ -304,9 +337,13 @@ module.exports.createCv = async (req, res, next) => {
      // Save the new CV to the database
      let savedCv = await newCv.save();
      if (!savedCv) {
+     
        let error = new Error("Failed to create CV");
+       console.log(error)
        return next(error);
      }
+
+    
  
      // Send a success response with the saved CV
      return res.status(200).json({
@@ -316,6 +353,7 @@ module.exports.createCv = async (req, res, next) => {
  
    } catch (error) {
      error.message = error.message || "An error occurred while creating the CV";
+     console.log(error)
      return next(error);
    }
  };
@@ -328,7 +366,7 @@ module.exports.createCv = async (req, res, next) => {
        const {
            name, jobTitle, phone, email, location, profile, linkedin, socialMedia, summary,
            education, experiences, workExperience, researchExperience, publications,
-           awards, achievements, certifications, skills, skillset, cvTemplateType, skills3, languages, aboutMe, address,employmentHistory,contact, references
+           awards, achievements, certifications, skills, skillset, cvTemplateType, skills3, languages, aboutMe, address,employmentHistory,contact, references,skills4
        } = req.body;
 
        console.log(req.body);
@@ -373,6 +411,7 @@ module.exports.createCv = async (req, res, next) => {
 
        // Handle the 'skills' and 'skillset' fields separately
        existingCv.skills = skills || existingCv.skills;
+       existingCv.skills4 = skills4 || existingCv.skills4;
        existingCv.skillset = skillset || existingCv.skillset;  // Add this new field for 'skillset'
        existingCv.skills3 = skills3 || existingCv.skills3;
        existingCv.cvTemplateType = cvTemplateType || existingCv.cvTemplateType;
