@@ -124,12 +124,7 @@ const cvSchema = new mongoose.Schema({
       proficiency: { type: String },
     },
   ],
-  skills3:[
-    {
-      skill: { type: String },
-      level: { type: String },
-    },
-  ],
+  skills3:{ type: String },
   skills4:[{ type: String }],
   skillset: [{
     skill: { type: String },

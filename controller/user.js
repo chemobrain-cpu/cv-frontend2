@@ -8,9 +8,6 @@ const { generateAccessToken } = require("../utils/utils");
 
 
 
-Cv.find().then(data=>{
-   console.log(data)
-})
 module.exports.validateToken = async (req, res, next) => {
    try {
       
@@ -290,7 +287,8 @@ module.exports.createCv = async (req, res, next) => {
        education, experiences, workExperience, researchExperience, publications,
        awards, achievements, certifications, skills, skillset, cvTemplateType, skills3, languages, aboutMe, address,employmentHistory,contact, references,skills4
      } = req.body;
- 
+
+    
      // Check if the user exists
      let user = await User.findById(id);
      if (!user) {
