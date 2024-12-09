@@ -38,10 +38,12 @@ const userSchema = new mongoose.Schema({
   billingAddress: {
     type: String,
   },
-
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  paymentPlan:{
+    type: String,
   }
 });
 

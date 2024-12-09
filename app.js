@@ -16,7 +16,6 @@ app.use(cors())
 app.use(bodyParser.json())
 
 
-
 const userRoutes = require("./routes/user")
 //using the routes
 app.use(userRoutes.router)
