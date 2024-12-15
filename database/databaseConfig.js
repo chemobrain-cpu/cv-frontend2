@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  paymentPlan:{
+  paymentPlan: {
     type: String,
   }
 });
@@ -120,20 +120,19 @@ const cvSchema = new mongoose.Schema({
   ],
   achievements: [{ description: { type: String } }],
   certifications: [{ type: String }],
-  skills: [
-    {
-      skill: { type: String },
-      proficiency: { type: String },
-    },
-  ],
-  skills3:{ type: String },
-  skills4:[{ type: String }],
+  skills: {
+    Mandarin: { type: String },
+    R: { type: String },
+    Spanish: { type: String },
+  },
+  skills3: { type: String },
+  skills4: [{ type: String }],
   skillset: [{
     skill: { type: String },
     level: { type: String },
   },
   ],
-  employmentHistory:[{
+  employmentHistory: [{
     title: { type: String },
     location: { type: String },
     responsibilities: [{ type: String }],
@@ -143,13 +142,27 @@ const cvSchema = new mongoose.Schema({
 
 
   languages: [{ language: { type: String }, proficiency: { type: String } }],
-  contact: { phone: { type: String }, address: { type: String }, email:{type:String} },
+  contact: { phone: { type: String }, address: { type: String }, email: { type: String } },
   cvTemplateType: { type: String },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
-  references: [{ phone: { type: String }, name: { type: String }, email:{type:String} }],
+  references: [{ phone: { type: String }, name: { type: String }, email: { type: String } }],
+  
+  educations: 
+    {
+      degree: { type: String },
+      institution: { type: String },
+      year: { type: String },
+      details: { type: String },
+      duration: { type: String },
+      dateRange: { type: String },
+      date: { type: String },
+      honors: { type: String },
+      location: { type: String },
+    },
+  
   createdAt: {
     type: Date,
     default: Date.now,

@@ -11,6 +11,7 @@ const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
 const axios = require('axios')
 
 
+
 module.exports.validateToken = async (req, res, next) => {
    try {
       // Get the token from the "Authorization" header and remove the "Bearer " prefix
@@ -282,7 +283,7 @@ module.exports.createCv = async (req, res, next) => {
 
       const {
          name, jobTitle, phone, email, location, profile, linkedin, socialMedia, summary,
-         education, experiences, workExperience, researchExperience, publications,
+         education, educations, experiences, workExperience, researchExperience, publications,
          awards, achievements, certifications, skills, skillset, cvTemplateType, skills3, languages, aboutMe, address, employmentHistory, contact, references, skills4
       } = req.body;
 
@@ -310,6 +311,7 @@ module.exports.createCv = async (req, res, next) => {
          socialMedia,
          summary,
          education,
+         educations,
          experiences,
          workExperience,
          researchExperience,
@@ -332,6 +334,8 @@ module.exports.createCv = async (req, res, next) => {
 
       // Save the new CV to the database
       let savedCv = await newCv.save();
+
+      console.log(savedCv)
       if (!savedCv) {
 
          let error = new Error("Failed to create CV");
@@ -358,12 +362,11 @@ module.exports.updateCv = async (req, res, next) => {
    try {
       const { id } = req.params;
       const {
-         name, jobTitle, phone, email, location, profile, linkedin, socialMedia, summary,
+         _id,name, jobTitle, phone, email, location, profile, linkedin, socialMedia, summary,
          education, experiences, workExperience, researchExperience, publications,
-         awards, achievements, certifications, skills, skillset, cvTemplateType, skills3, languages, aboutMe, address, employmentHistory, contact, references, skills4
+         awards, achievements, certifications, skills, skillset, cvTemplateType, skills3, languages, aboutMe, address, employmentHistory, contact, references, skills4,educations
       } = req.body;
 
-      console.log(req.body);
 
       // Check if the user exists
       let user = await User.findById(id);
@@ -374,7 +377,7 @@ module.exports.updateCv = async (req, res, next) => {
       }
 
       // Check if the CV exists for the user
-      let existingCv = await Cv.findOne({ user: user._id });
+      let existingCv = await Cv.findOne({ _id: _id });
       if (!existingCv) {
          let error = new Error("CV not found for the user");
          error.statusCode = 404;
@@ -394,6 +397,7 @@ module.exports.updateCv = async (req, res, next) => {
 
       // Update the 'education' and other nested fields
       existingCv.education = education || existingCv.education;
+      existingCv.educations = educations || existingCv.educations;
       existingCv.experiences = experiences || existingCv.experiences;
       existingCv.employmentHistory = employmentHistory || existingCv.employmentHistory;
       existingCv.workExperience = workExperience || existingCv.workExperience;
@@ -404,7 +408,10 @@ module.exports.updateCv = async (req, res, next) => {
       existingCv.certifications = certifications || existingCv.certifications;
 
       // Handle the 'skills' and 'skillset' fields separately
-      existingCv.skills = skills || existingCv.skills;
+      existingCv.skills.Mandarin = skills?.Mandarin?skills.Mandarin:existingCv.skills.Mandarin;
+      existingCv.skills.R = skills?.R || existingCv.skills.R;
+      existingCv.skills.Spanish = skills?.Spanish || existingCv.skills.Spanish;
+     
       existingCv.skills4 = skills4 || existingCv.skills4;
       existingCv.skillset = skillset || existingCv.skillset;  // Add this new field for 'skillset'
       existingCv.skills3 = skills3 || existingCv.skills3;
@@ -431,6 +438,9 @@ module.exports.updateCv = async (req, res, next) => {
          return next(error);
       }
 
+
+
+      console.log(updatedCv )
       // Send a success response with the updated CV
       return res.status(200).json({
          message: "CV updated successfully",
@@ -438,6 +448,7 @@ module.exports.updateCv = async (req, res, next) => {
       });
 
    } catch (error) {
+      console.log(error)
       error.message = error.message || "An error occurred while updating the CV";
       return next(error);
    }
@@ -531,28 +542,6 @@ module.exports.initiatePlan = async (req, res) => {
       return res.status(500).json({ error: error.message });
    }
 };
-
-
-/*
-// Handle Paystack Webhooks
-router.post('/webhook', (req, res) => {
-    const event = req.body;
-    if (event.event === 'subscription.create') {
-        console.log('New Subscription Created:', event.data);
-    } else if (event.event === 'subscription.disable') {
-        console.log('Subscription Disabled:', event.data);
-    } else if (event.event === 'subscription.renewal') {
-        console.log('Subscription Renewed:', event.data);
-    }
-
-    res.status(200).send('Webhook received');
-});
-module.exports = router;
-*/
-
-
-
-
 
 
 module.exports.verifyPayment = async (req, res) => {
