@@ -280,7 +280,6 @@ module.exports.updateAccount = async (req, res, next) => {
 module.exports.createCv = async (req, res, next) => {
    try {
       const { id } = req.params;
-
       const {
          name, jobTitle, phone, email, location, profile, linkedin, socialMedia, summary,
          education, educations, experiences, workExperience, researchExperience, publications,
@@ -487,7 +486,6 @@ module.exports.deleteCv = async (req, res, next) => {
       return next(error);
    }
 };
-
 
 
 module.exports.initiatePlan = async (req, res) => {
